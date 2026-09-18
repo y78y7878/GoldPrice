@@ -1,0 +1,6 @@
+https://fred.stlouisfed.org/searchresults/?st=cpi&isTst=1
+https://fred.stlouisfed.org/series/TRESEGUSM052N
+https://fred.stlouisfed.org/series/TRESEGJPM052N
+https://stooq.com/q/d/?f=20200101&t=20260916&s=xauusd&c=0
+https://fred.stlouisfed.org/series/DFF
+https://hk.investing.com/currencies/xau-usd-historical-data
