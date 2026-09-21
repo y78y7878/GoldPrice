@@ -219,11 +219,15 @@ name = "goldprice"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "requests" },
     { name = "yfinance" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "yfinance", specifier = ">=1.7.0" }]
+requires-dist = [
+    { name = "requests", specifier = ">=2.34.2" },
+    { name = "yfinance", specifier = ">=1.7.0" },
+]
 
 [[package]]
 name = "idna"
