@@ -1,6 +1,6 @@
-https://fred.stlouisfed.org/searchresults/?st=cpi&isTst=1
-https://fred.stlouisfed.org/series/TRESEGUSM052N
-https://fred.stlouisfed.org/series/TRESEGJPM052N
-https://stooq.com/q/d/?f=20200101&t=20260916&s=xauusd&c=0
-https://fred.stlouisfed.org/series/DFF
-https://hk.investing.com/currencies/xau-usd-historical-data
+https://fred.stlouisfed.org/series/MEDCPIM158SFRBCLE     (Median Consumer Price Index)
+https://fred.stlouisfed.org/series/TRESEGJPM052N           (Reserves Excluding Gold for Japan)
+https://fred.stlouisfed.org/series/DFF      (Federal Funds Effective Rate)
+https://stooq.com/q/d/?f=20200101&t=20260916&s=xauusd&c=0  (historical xau/usd)
+https://hk.finance.yahoo.com/quote/DX-Y.NYB/    美元指數(DX-Y.NYB) yfinance可抓 
+
