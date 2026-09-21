@@ -7,7 +7,9 @@ authors = [
     { name = "y78y7878", email = "y78y7878@gmail.com" }
 ]
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "yfinance>=1.7.0",
+]
 
 [project.scripts]
 goldprice = "goldprice:main"
