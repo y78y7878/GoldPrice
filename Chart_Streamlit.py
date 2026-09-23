@@ -65,6 +65,12 @@ def add_indicators(data: pd.DataFrame) -> pd.DataFrame:
 	rsv = ((close - low_9) / price_range.replace(0, pd.NA)) * 100
 	result["K"] = rsv.ewm(alpha=1 / 3, adjust=False).mean()
 	result["D"] = result["K"].ewm(alpha=1 / 3, adjust=False).mean()
+
+	ema_12 = close.ewm(span=12, adjust=False).mean()
+	ema_26 = close.ewm(span=26, adjust=False).mean()
+	result["MACD"] = ema_12 - ema_26
+	result["Signal"] = result["MACD"].ewm(span=9, adjust=False).mean()
+	result["Histogram"] = result["MACD"] - result["Signal"]
 	return result
 
 
@@ -104,18 +110,21 @@ def make_chart(
 	show_candles: bool,
 ) -> plt.Figure:
 	has_kd = "KD" in selected_indicators
+	has_macd = "MACD" in selected_indicators
+	lower_count = int(has_kd) + int(has_macd)
 	figure, axes = plt.subplots(
-		2 if has_kd else 1,
+		1 + lower_count,
 		1,
-		figsize=(15, 8 if has_kd else 6),
+		figsize=(15, 6 + lower_count * 2.2),
 		sharex=True,
-		gridspec_kw={"height_ratios": [3, 1]} if has_kd else None,
+		gridspec_kw={"height_ratios": [3] + [1] * lower_count} if lower_count else None,
 	)
-	if has_kd:
-		price_axis, kd_axis = axes
-	else:
+	if lower_count == 0:
 		price_axis = axes
-		kd_axis = None
+		lower_axes: list[plt.Axes] = []
+	else:
+		price_axis = axes[0]
+		lower_axes = list(axes[1:])
 
 	if show_candles:
 		draw_candlesticks(price_axis, data)
@@ -146,7 +155,8 @@ def make_chart(
 		plot_price("Support", "Support", color="#16a085", marker="o", linestyle="None", markersize=4)
 		plot_price("Resistance", "Resistance", color="#e05d44", marker="o", linestyle="None", markersize=4)
 
-	if has_kd and kd_axis is not None:
+	if has_kd:
+		kd_axis = lower_axes.pop(0)
 		kd_x_values = range(len(data)) if show_candles else data.index
 		kd_axis.plot(kd_x_values, data["K"], label="K", color="#d35400")
 		kd_axis.plot(kd_x_values, data["D"], label="D", color="#2980b9")
@@ -157,7 +167,24 @@ def make_chart(
 		kd_axis.grid(alpha=0.25)
 		kd_axis.legend(loc="upper left", ncol=4)
 
-	price_axis.set_title(f"XAUUSD")
+	if has_macd:
+		macd_axis = lower_axes.pop(0)
+		macd_x_values = range(len(data)) if show_candles else data.index
+		macd_axis.plot(macd_x_values, data["MACD"], label="MACD", color="#d35400", linewidth=1.5)
+		macd_axis.plot(macd_x_values, data["Signal"], label="Signal", color="#2980b9", linewidth=1.2)
+		macd_axis.axhline(0, color="#7f8c8d", linestyle="--", linewidth=0.8)
+		macd_axis.bar(
+			list(macd_x_values),
+			data["Histogram"],
+			width=0.8,
+			color=["#16a085" if value >= 0 else "#e05d44" for value in data["Histogram"]],
+			alpha=0.75,
+		)
+		macd_axis.set_ylabel("MACD")
+		macd_axis.grid(alpha=0.25)
+		macd_axis.legend(loc="upper left")
+
+	price_axis.set_title("XAUUSD")
 	price_axis.set_ylabel("Price (USD)")
 	price_axis.grid(alpha=0.25)
 	price_axis.legend(loc="upper left", ncol=4)
@@ -182,7 +209,7 @@ def main() -> None:
 		timeframe = st.selectbox("時間週期", ["日線", "週線", "月線"])
 		selected_indicators = st.multiselect(
 			"技術指標（可複選）",
-			["布林通道", "均線", "KD", "支撐位/阻力位"],
+			["布林通道", "均線", "KD", "MACD", "支撐位/阻力位"],
 			default=["均線"],
 		)
 		show_candles = st.checkbox("顯示 K 線", value=True)
