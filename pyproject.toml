@@ -7,7 +7,14 @@ authors = [
     { name = "y78y7878", email = "y78y7878@gmail.com" }
 ]
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "matplotlib>=3.11.2",
+    "pandas>=3.0.6",
+    "requests>=2.34.2",
+    "streamlit>=1.45.0",
+    "ta>=0.11.0",
+    "yfinance>=1.7.0",
+]
 
 [project.scripts]
 goldprice = "goldprice:main"

@@ -1,0 +1,16 @@
+xauusd (gold)
+
+基本框架
+
+基本政策面分析 (2021-2026/8未確認)
+美元指數(DX-Y.NYB) yfinance可抓
+FRED: 美國利率政策 FFER
+FRED: CPI 
+FRED: 黃金儲備 (Reserves Excluding Gold for Japan (TRESEGJPM052N) 
+
+技術分析 
+gold : MA,KD, (日線,月線, 年線), 布林通道, 支撐位,阻力位等
+
+後續走勢分析
+
+
