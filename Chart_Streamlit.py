@@ -347,16 +347,13 @@ def make_chart(
 
 
 YEAR_OPTIONS = [str(year) for year in range(2021, 2027)]
-TECHNICAL_CHARTS = {
-	"布林通道": ("日線", ["布林通道"], False),
-	"日線": ("日線", [], False),
-	"支撐/阻力位": ("日線", ["支撐位/阻力位"], False),
-	"K線": ("日線", [], True),
-	"KD": ("日線", ["KD"], False),
-	"均線": ("日線", ["均線"], False),
-	"MACD": ("日線", ["MACD"], False),
-	"月線": ("月線", [], True),
-	"週線": ("週線", [], True),
+YEARLY_FUNDAMENTAL_ANALYSIS = {
+	"2021": """**走勢表現**：9 至 12 月金價約在每盎司 1,700 至 1,800 美元間震盪打底。\n\n**數據動態**\n- 聯邦基金有效利率（DFF）維持在接近 0% 的低檔。\n- 疫情後供應鏈瓶頸與資金寬鬆推升通膨。\n- 美聯儲釋出縮減購債與未來升息訊號，美元自低點回升。\n\n**重點回顧**：高通膨帶來避險支撐，但升息預期壓抑金價上行空間，黃金呈現狹幅震盪格局。""",
+	"2022": """**走勢表現**：俄烏戰爭爆發初期推升金價，之後在美聯儲快速升息與美元走強下回落，年底下探至每盎司 1,600 多美元。\n\n**數據動態**\n- DFF 從接近 0% 快速升至年底 4% 以上。\n- 美元指數於下半年突破 110。\n- 通膨率在高點震盪，隨升息逐漸回落。\n- 全球央行購金開始顯著增加。\n\n**重點回顧**：戰爭初期的避險需求推升金價，但升息與美元飆升提高持有黃金的機會成本，形成回檔壓力；央行購金則逐漸展現支撐力。""",
+	"2023": """**走勢表現**：金價止跌回升，主要在每盎司 1,800 至 2,050 美元區間震盪偏強，年底再度蓄勢。\n\n**數據動態**\n- DFF 在 5.25% 至 5.33% 高位，升息進入尾聲。\n- 美元指數自高點回落，在 100 至 106 區間震盪。\n- MEDCPI 通膨數據顯著回落。\n- 全球央行持續增加黃金儲備。\n\n**重點回顧**：美國地區性銀行危機與以哈衝突提升避險需求；升息見頂預期、美元走弱，以及央行購金與去美元化趨勢共同支撐金價。""",
+	"2024": """**走勢表現**：金價突破歷史高點，從每盎司約 2,000 美元展開上漲，年內一度接近 2,800 美元。\n\n**數據動態**\n- 美聯儲於下半年啟動降息，DFF 隨之下行。\n- 降息預期帶動美元走弱。\n- 通膨緩步降溫，實質利率回落。\n- 全球央行持金量突破 31,000 噸並續創高。\n\n**重點回顧**：美聯儲政策轉向降低持有黃金的機會成本；中東局勢、俄烏戰事與美國大選不確定性，進一步帶動避險與趨勢資金流入。""",
+	"2025": """**走勢表現**：金價主升段加速，收盤價持續突破前高，呈現強勢上漲。\n\n**數據動態**\n- 降息循環延續，DFF 持續下行。\n- 美元上半年一度反彈，隨後轉弱，對金價壓力有限。\n- 通膨降至低位後大致平穩。\n- 全球央行持金量持續創高。\n\n**重點回顧**：金價一度與美元等傳統因素脫鉤。主權債務疑慮、央行儲備多元化與降息環境共同推動強勁漲勢。""",
+	"2026": """**走勢表現**：截至 8 月 31 日，金價創高後出現大幅拉回與劇烈波動，之後在高檔整理。\n\n**數據動態**\n- DFF 降至約 3.75% 至 4.00% 後，降息節奏放緩。\n- 美元指數約在 95 至 102 間震盪。\n- 通膨在低位區間波動。\n- 全球央行持金量年初衝高後，增速放緩並於高檔整理。\n\n**重點回顧**：經過前兩年的大幅上漲，獲利了結增加；降息預期已部分反映、央行購金增速暫緩，金價因此進入高檔整理期。""",
 }
 SOURCE_FILES = {
 	"全球央行黃金儲備爬蟲": "goldreserves.py",
@@ -422,37 +419,16 @@ def show_fundamental_page(macro_data: dict[str, pd.DataFrame]) -> None:
 	st.header("黃金基本面分析")
 	st.write("整合黃金價格、美元指數、全球央行黃金儲備、利率與 CPI，觀察 2021 至 2026 年的宏觀變化。")
 	selected_year = st.radio("選擇年份", YEAR_OPTIONS, horizontal=True, key="fundamental_year")
+	st.subheader(f"{selected_year} 年分析結論")
+	st.markdown(YEARLY_FUNDAMENTAL_ANALYSIS[selected_year])
 	start_date = pd.Timestamp(f"{selected_year}-01-01")
 	end_date = pd.Timestamp(f"{selected_year}-12-31")
 	show_macro_charts(macro_data, start_date, end_date)
 
 
-def show_technical_page(raw_data: pd.DataFrame) -> None:
+def show_technical_analysis_page(raw_data: pd.DataFrame) -> None:
 	st.header("黃金技術面分析")
-	chart_name = st.selectbox("選擇技術圖表", list(TECHNICAL_CHARTS), key="technical_chart")
-	selected_year = st.radio("選擇年份", YEAR_OPTIONS, horizontal=True, key="technical_year")
-	timeframe, indicators, show_candles = TECHNICAL_CHARTS[chart_name]
-	period_data = resample_ohlc(raw_data, timeframe)
-	start_date = pd.Timestamp(f"{selected_year}-01-01")
-	end_date = pd.Timestamp(f"{selected_year}-12-31")
-	chart_data = add_indicators(period_data).loc[start_date:end_date]
-	if chart_data.empty:
-		st.warning("這個年份沒有可用的價格資料。")
-		return
-	figure = make_chart(
-		chart_data,
-		timeframe,
-		indicators,
-		show_candles,
-		title=f"XAUUSD {chart_name} ({selected_year})",
-	)
-	st.pyplot(figure, use_container_width=True)
-	plt.close(figure)
-
-
-def show_total_analysis(raw_data: pd.DataFrame, macro_data: dict[str, pd.DataFrame]) -> None:
-	st.header("綜合分析")
-	st.write("在同一個日期區間對照黃金價格、技術指標與宏觀因素，協助整理市場趨勢。")
+	st.write("選擇技術指標與日期範圍，檢視 XAUUSD 價格趨勢。")
 	selected_indicators = st.multiselect(
 		"選擇分析內容",
 		[
@@ -487,12 +463,52 @@ def show_total_analysis(raw_data: pd.DataFrame, macro_data: dict[str, pd.DataFra
 		"日線",
 		selected_indicators,
 		False,
-		title="XAUUSD 綜合分析",
+		title="XAUUSD 技術面分析",
 	)
 	st.pyplot(figure, use_container_width=True)
 	plt.close(figure)
-	st.subheader("基本面對照")
-	show_macro_charts(macro_data, start_date, end_date)
+	st.subheader("日線技術分析（2025/09/01–2026/08/31）")
+	st.markdown("**均線系統（MA）｜四階段走勢**")
+	ma_phases = [
+		("2025/09–2026/01・強勢攻頂", "短、中、長期均線呈多頭排列，金價約由 3,400 美元上升至 2026 年 1 月突破 5,500 美元。回檔多在 MA20 或 MA60 附近獲得支撐。"),
+		("2026/02–2026/04・趨勢反轉", "金價自高檔回落並跌破短中期均線；3 月底至 4 月初下破 MA120，觸及約 4,100 美元後反彈，短期均線下穿中長期均線。"),
+		("2026/05–2026/07・修正築底", "金價受制於 MA60、MA120，長期均線走平或下彎；期間多次測試約 4,000–4,300 美元的 MA240 區域並獲支撐。"),
+		("2026/08・反彈整理", "金價連續突破 MA5、MA10、MA20、MA60 與 MA120，短期均線再度上穿中長期均線，出現初步轉強訊號。"),
+	]
+	for row_start in (0, 2):
+		phase_columns = st.columns(2)
+		for column, (phase, description) in zip(phase_columns, ma_phases[row_start:row_start + 2]):
+			with column:
+				with st.container(border=True):
+					st.markdown(f"**{phase}**")
+					st.write(description)
+
+	kd_column, macd_column = st.columns(2)
+	with kd_column:
+		with st.container(border=True):
+			st.subheader("KD 指標")
+			st.markdown(
+				"- **主升段**：2025/09–2026/01 長時間處於 80 以上高檔。\n"
+				"- **波段轉折**：2025/11 與 2026/03 兩度跌入 20 以下，之後出現反彈或打底。\n"
+				"- **整理與近期**：2026/04–06 在 20–70 間擺動；2026/08 升至超買區後高檔交叉向下，短線留意整理壓力。"
+			)
+	with macd_column:
+		with st.container(border=True):
+			st.subheader("MACD 指標")
+			st.markdown(
+				"- **2026/01**：雙線與柱狀體升至階段高點，柱狀體超過 200。\n"
+				"- **2026/03–04**：雙線快速下穿零軸，負向柱狀體擴大，空方動能增強。\n"
+				"- **2026/06–08**：零軸下方築底回升，約 -100 附近止跌；8 月上穿零軸、柱狀體擴大，顯示中期動能轉強。"
+			)
+
+	st.subheader("綜合總結與後續觀察")
+	st.info("高檔攻頂（2025/09–2026/01）→ 深度修正（2026/02–2026/04）→ 年線附近打底（2026/05–2026/07）→ 反彈轉強（2026/08）")
+	support_column, resistance_column = st.columns(2)
+	with support_column:
+		st.metric("支撐觀察", "MA240 約 4,400 美元・MA60")
+	with resistance_column:
+		st.metric("前高壓力區", "4,600–4,800 美元")
+	st.caption("KD 高檔交叉向下，短線可能回測均線支撐或整理；若 MACD 維持零軸之上且均線支撐未失守，中期回升架構仍可延續。")
 
 
 def show_source_code(title: str, file_name: str) -> None:
@@ -675,7 +691,7 @@ def render_navbar() -> None:
 					<div class="gold-dropdown-menu">
 						<a href="?page=fundamental" target="_self">基本面分析</a>
 						<a href="?page=technical" target="_self">技術面分析</a>
-						<a href="?page=total" target="_self">綜合分析</a>
+						<a href="?page=outlook" target="_self">價格預測與展望</a>
 					</div>
 				</div>
 				<div class="gold-dropdown">
@@ -730,6 +746,71 @@ def show_conclusion_page() -> None:
 	st.header("專題結論")
 	st.write("本專題透過基本面與技術面資料，整理 XAUUSD 在研究期間的價格變化與可能影響因素。")
 	st.write("使用者可以從專題分析查看不同年份與日期範圍，並搭配製作過程了解資料蒐集、資料處理、資料分析、視覺化與網站整合流程。")
+
+
+def show_outlook_page() -> None:
+	st.header("黃金價格預測與展望")
+	st.caption("報酬率與市場觀察資料截至 2026/08/31；以下情境為研究整理，不代表未來保證或投資建議。")
+
+	st.subheader("不同期間報酬率")
+	return_rows = [
+		("短期", [("1 個月", "9.83%"), ("3 個月", "-2.13%"), ("6 個月", "-15.48%")]),
+		("長期", [("1 年", "28.87%"), ("3 年", "129.33%"), ("5 年", "153.24%")]),
+	]
+	for horizon, row in return_rows:
+		st.caption(horizon)
+		with st.container(horizontal=True):
+			for period, value in row:
+				st.metric(f"{period}報酬率", value, border=True)
+
+	st.markdown(
+		"長期累積報酬反映研究期間黃金價格的顯著增長；短期報酬分化則顯示近期仍有波動。"
+		"六個月報酬為負、單月報酬轉正可能代表修正後出現回升訊號，但單一指標不足以確認底部。"
+	)
+
+	st.subheader("技術面：支撐區與動能修復")
+	st.metric("關鍵支撐觀察", "約 4,000 美元", "日線 MA240・月線 MA20 附近")
+	st.markdown(
+		"2026 年 6 至 7 月金價回測整數關卡並出現長下影線，原分析視為上升通道的第二次築底測試。"
+		"KD 自 20 以下超賣區交叉向上，MACD 負向柱狀體收縮並轉正，顯示動能修復；短線仍可能在支撐區附近震盪。"
+	)
+
+	st.subheader("基本面：利率壓力與結構性買盤")
+	st.markdown(
+		"CPI 通膨逐步回落，市場持續消化美國利率政策變化。高實質利率仍會增加持有黃金的機會成本、"
+		"限制短線漲勢；若升息終點逐漸明朗，利率壓力的邊際影響可能減弱，為中長期走勢提供空間。"
+	)
+	st.markdown("央行儲備重構與去美元化可能構成長期需求來源。以下為原文引用的世界黃金協會調查結果：")
+	st.caption("調查期間：2026/02/05–2026/05/19｜有效回覆：76 家央行")
+	with st.container(horizontal=True):
+		st.metric("預期全球央行黃金儲備增加", "89%", "未來一年")
+		st.metric("計畫增持黃金", "45%", "受訪央行")
+		st.metric("預期減持黃金", "1%", "受訪央行")
+		st.metric("預期美元儲備占比下降", "74%", "未來五年")
+
+	st.subheader("地緣政治：三種傳導路徑")
+	geopolitical_columns = st.columns(3)
+	geopolitical_paths = [
+		("避險需求", "區域衝突升高不確定性，資金可能由高風險資產轉向黃金。"),
+		("能源與通膨", "重要航道或產區受衝擊，可能推升能源與大宗商品價格，增加通膨避險需求。"),
+		("儲備重構", "地緣金融制裁可能促使部分央行調整外匯儲備配置，增加實體黃金需求。"),
+	]
+	for column, (title, description) in zip(geopolitical_columns, geopolitical_paths):
+		with column:
+			with st.container(border=True):
+				st.markdown(f"**{title}**")
+				st.write(description)
+
+	st.subheader("價格區間與觀察重點")
+	short_term, long_term = st.columns(2)
+	with short_term:
+		with st.container(border=True):
+			st.metric("短期｜1–3 個月", "4,000–4,300 美元")
+		st.write("原文預期以震盪築底或反彈為主；4,000–4,200 美元為主要支撐觀察區，帶量突破 4,600 美元壓力區才是轉強訊號。")
+	with long_term:
+		with st.container(border=True):
+			st.metric("中長期｜6 個月以上至 2027 年", "4,600–5,400+ 美元")
+		st.write("原文整理的機構展望指向 2026 年底至 2027 年挑戰 5,000–5,400 美元；實際走勢仍取決於利率、美元、央行需求與地緣風險。")
 
 
 def show_home_page() -> None:
@@ -864,10 +945,10 @@ def main() -> None:
 		show_home_page()
 	elif page == "fundamental":
 		show_fundamental_page(macro_data)
-	elif page == "technical":
-		show_technical_page(raw_data)
-	elif page == "total":
-		show_total_analysis(raw_data, macro_data)
+	elif page == "outlook":
+		show_outlook_page()
+	elif page in {"technical", "total"}:
+		show_technical_analysis_page(raw_data)
 	elif page in {"scraping", "charts", "streamlit"}:
 		show_process_page(page)
 	elif page == "conclusion":
